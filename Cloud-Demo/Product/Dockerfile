@@ -1,10 +1,12 @@
 FROM openjdk:17-jdk-slim
 
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 ARG JAR_FILE=target/*.jar
 ARG GIT_SECRET
+ARG GIT_CLIENT_ID=Ov23litOUbZgf6NTZC8Y
+
 COPY ${JAR_FILE} app.jar
 
 ENV NACOS_URL=ld-nacos:8848 \
@@ -18,6 +20,7 @@ ENV NACOS_URL=ld-nacos:8848 \
     LDAP_BASE=dc=liz,dc=cn \
     LDAP_USER=cn=admin,dc=liz,dc=cn \
     LDAP_PASSWORD=123456 \
-    GIT_SECRET=${GIT_SECRET}
+    GIT_SECRET=${GIT_SECRET} \
+    GIT_CLIENT_ID=${GIT_CLIENT_ID}
 
 ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=${ACTIVE_PROFILE:prod}"]

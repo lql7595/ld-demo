@@ -7,6 +7,9 @@ vue/node_modules/
 vue/dist/
 vue/.env.local
 
+vue-vite/node_modules/
+vue-vite/dist/
+
 # Java
 Cloud-Demo/.idea/
 Cloud-Demo/logs/
