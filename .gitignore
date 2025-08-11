@@ -6,6 +6,8 @@
 vue/node_modules/
 vue/.env.*
 vue/dist/
+vue/.env.local
+vue/.env.production
 
 # Java
 Cloud-Demo/.idea/
@@ -13,11 +15,3 @@ Cloud-Demo/logs/
 Cloud-Demo/Product/target/
 Cloud-Demo/Product/src/test/
 
-# 通用
-*.log
-*.class
-*.jar
-*.war
-*.ear
-.DS_Store
-Thumbs.db

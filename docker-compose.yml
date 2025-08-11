@@ -55,8 +55,8 @@ services:
       timeout: 5s
       retries: 30
       start_period: 40s
-  networks:
-    - ld-net
+    networks:
+      - ld-net
 
   ld-backend:
     build:
@@ -108,3 +108,5 @@ networks:
 
 volumes:
   ld-ldap_data:
+  ld-ldap_config:
+
