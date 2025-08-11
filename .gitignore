@@ -7,7 +7,6 @@ vue/node_modules/
 vue/.env.*
 vue/dist/
 vue/.env.local
-vue/.env.production
 
 # Java
 Cloud-Demo/.idea/

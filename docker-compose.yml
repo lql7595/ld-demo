@@ -60,7 +60,7 @@ services:
 
   ld-backend:
     build:
-      context: ./Login-demo-service/Login-demo/Product/
+      context: ./Cloud-Demo/Product/
     ports:
       - "8000:8000"
     environment:
@@ -92,7 +92,7 @@ services:
 
   ld-vue:
     build:
-      context: ./Login-demo-vue/
+      context: ./vue/
       args:
         ENV_FILE: ./.env.production
     ports:
