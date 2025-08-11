@@ -1,0 +1,36 @@
+spring:
+  profiles:
+    active:
+      on-profile: prod
+  cloud:
+    nacos:
+      config:
+        server-addr: ${NACOS_URL}
+        import-check:
+          enabled: true
+      discovery:
+        server-addr: ${NACOS_URL}
+  datasource:
+    url: jdbc:mysql://${MYSQL_URL}/${MYSQL_NAME}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    max-wait: 60000
+  data:
+    redis:
+      host: ${REDIS_HOST}  # 确保这里是 localhost
+      port: 6379
+      password: ${REDIS_PASSWORD} # 如果设置了密码，填写密码
+      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 1
+  ldap:
+    urls: ldap://${LDAP_HOST}:389
+    base: ${LDAP_BASE}
+    username: ${LDAP_USER}
+    password: ${LDAP_PASSWORD}

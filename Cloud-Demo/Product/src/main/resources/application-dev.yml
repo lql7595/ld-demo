@@ -1,0 +1,36 @@
+spring:
+  profiles:
+    active:
+      on-profile: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: 47.106.76.165:8848
+        import-check:
+          enabled: false
+      discovery:
+        server-addr: 47.106.76.165:8848
+  datasource:
+    url: jdbc:mysql://47.106.76.165:3306/demo_pd?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    max-wait: 60000
+  data:
+    redis:
+      host: 47.106.76.165  # 确保这里是 localhost
+      port: 6379
+      password: 123456 # 如果设置了密码，填写密码
+      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 1
+  ldap:
+    urls: ldap://47.106.76.165:389
+    base: dc=liz,dc=cn
+    username: cn=admin,dc=liz,dc=cn
+    password: 123456

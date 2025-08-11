@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  ld-mysql:
+    image: ld-mysql-data
+    container_name: ld-mysql
+    environment:
+      MYSQL_DATABASE: demo_pd
+    ports:
+      - "3306:3306"
+    networks:
+      - ld-net
+
+  ld-redis:
+    image: bitnami/redis
+    container_name: ld-redis
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: 123456
+    networks:
+      - ld-net
+
+  ld-ldap:
+    image: osixia/openldap
+    container_name: ld-ldap
+    ports:
+      - "389:389"
+      - "636:636"
+    environment:
+      LDAP_BASE_DN: "dc=liz,dc=cn"
+      LDAP_ORGANISATION: "Liz"
+      LDAP_DOMAIN: "liz.cn"
+      LDAP_ADMIN_PASSWORD: "123456"
+    volumes:
+      - ld-ldap_data:/var/lib/ldap
+      - /usr/local/ldap:/usr/local/ldap
+      - ld-ldap_config:/etc/ldap/slapd.d
+      - ./ldap-init:/container/service/slapd/assets/config/bootstrap/ldif/custom
+    command: --copy-service
+    networks:
+      - ld-net
+
+  ld-nacos:
+    image: nacos/nacos-server:v2.4.3
+    container_name: ld-nacos
+    environment:
+      - MODE=standalone
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+  networks:
+    - ld-net
+
+  ld-backend:
+    build:
+      context: ./Login-demo-service/Login-demo/Product/
+    ports:
+      - "8000:8000"
+    environment:
+      ACTIVE_PROFILE: prod
+      NACOS_URL: ld-nacos:8848
+      MYSQL_URL: ld-mysql:3306
+      MYSQL_NAME: demo_pd
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 123456
+      REDIS_HOST: ld-redis
+      REDIS_PASSWORD: 123456
+      LDAP_HOST: ld-ldap
+      LDAP_BASE: dc=liz,dc=cn
+      LDAP_USER: cn=admin,dc=liz,dc=cn
+      LDAP_PASSWORD: 123456
+      GIT_SECRET: ${GIT_SECRET}
+    container_name: ld-backend
+    depends_on:
+      ld-nacos:
+        condition: service_healthy
+      ld-mysql:
+        condition: service_started
+      ld-redis:
+        condition: service_started
+      ld-ldap:
+        condition: service_started
+    networks:
+      - ld-net
+
+  ld-vue:
+    build:
+      context: ./Login-demo-vue/
+      args:
+        ENV_FILE: ./.env.production
+    ports:
+      - "80:80"
+    restart: always
+    container_name: ld-vue
+    networks:
+      - ld-net
+
+networks:
+  ld-net:
+    driver: bridge
+
+volumes:
+  ld-ldap_data:

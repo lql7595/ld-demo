@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liz.mapper.ProductInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.liz.bean.vo.ProductInfoVO">
+        <!--@Table user_info-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,product_name
+    </sql>
+    
+    <select id="queryProInfoList" resultType="com.liz.bean.vo.ProductInfoVO">
+        select * from pd_product_info
+        <where>
+            <if test="req.keyId != null and req.keyId != 0">
+                and id = #{req.keyId}
+            </if>
+            <if test="req.keyFuzzy != null and req.keyFuzzy != ''.toString()">
+                and product_name like concat('%', #{req.keyFuzzy}, '%')
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+</mapper>
+

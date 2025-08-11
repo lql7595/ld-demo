@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liz.mapper.UserInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.liz.bean.entity.UserInfoEntity">
+        <!--@Table user_info-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="userType" column="user_type" jdbcType="VARCHAR"/>
+        <result property="pwd" column="pwd" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,user_name,pwd,user_type,user_name_2,user_name_3
+    </sql>
+
+    <select id="queryUserInfo" resultType="com.liz.bean.entity.UserInfoEntity">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info where user_id = #{userLogin}
+    </select>
+
+    <resultMap id="userRoleMap" type="com.liz.bean.vo.UserRoleInfoVO">
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="userRoleTp" column="role_tp"/>
+        <collection property="roleTpList" ofType="string">
+            <result column="role_tp_rela"/>
+        </collection>
+    </resultMap>
+    <select id="queryUserRoleInfo" resultMap="userRoleMap">
+        select t1.user_id,t2.role_tp, t3.role_tp_rela from user_info t1 left join user_role_t t2 on t1.user_id =
+        t2.user_id
+        left join role_relation_t t3 on t2.role_tp = t3.role_tp
+        where t1.user_id = #{userLogin}
+    </select>
+
+    <select id="queryAllRoleRela" resultType="com.liz.bean.entity.RoleRelationTEntity">
+        select role_tp as roleTp, role_tp_rela as roleTpRela from role_relation_t
+
+    </select>
+
+
+</mapper>
+

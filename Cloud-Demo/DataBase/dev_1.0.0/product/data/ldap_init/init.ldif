@@ -1,0 +1,52 @@
+dn: ou=users,dc=liz,dc=cn
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=roles,dc=liz,dc=cn
+objectClass: organizationalUnit
+ou: roles
+
+
+# 创建用户
+dn: cn=ldap_user_1,ou=users,dc=liz,dc=cn
+objectClass: inetOrgPerson
+cn: ldap_user_1
+uid: ldap_user_1
+sn: ldap_user_1
+userPassword: ldap_user_1
+mail: ldap_user_1@liz.cn
+
+dn: cn=ldap_editor_1,ou=users,dc=liz,dc=cn
+objectClass: inetOrgPerson
+cn: ldap_editor_1
+sn: ldap_editor_1
+uid: ldap_editor_1
+userPassword: ldap_editor_1
+mail: ldap_editor_1@liz.cn
+
+dn: cn=ldap_adm_1,ou=users,dc=liz,dc=cn
+objectClass: inetOrgPerson
+cn: ldap_adm_1
+sn: ldap_adm_1
+uid: ldap_adm_1
+userPassword: ldap_adm_1
+mail: ldap_adm_1@liz.cn
+
+# 创建角色组
+dn: cn=ADMIN,ou=roles,dc=liz,dc=cn
+objectClass: groupOfNames
+cn: ADMIN
+description: 总监角色
+member: cn=ldap_adm_1,ou=users,dc=liz,dc=cn
+
+dn: cn=EDITOR,ou=roles,dc=liz,dc=cn
+objectClass: groupOfNames
+cn: EDITOR
+description: 组长角色
+member: cn=ldap_editor_1,ou=users,dc=liz,dc=cn
+
+dn: cn=USER,ou=roles,dc=liz,dc=cn
+objectClass: groupOfNames
+cn: USER
+description: 组员角色
+member: cn=ldap_user_1,ou=users,dc=liz,dc=cn
