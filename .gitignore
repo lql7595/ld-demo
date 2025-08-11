@@ -4,7 +4,6 @@
 
 # Vue.js
 vue/node_modules/
-vue/.env.*
 vue/dist/
 vue/.env.local
 

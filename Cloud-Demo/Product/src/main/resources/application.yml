@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: 7573
   servlet:
     context-path: /demo
 spring:
@@ -21,7 +21,7 @@ cus:
     githubUserUrl: https://api.github.com/user
     githubAuthUrl: https://github.com/login/oauth/authorize
     githubAccTokenUrl: https://github.com/login/oauth/access_token
-    githubClientId: Ov23litOUbZgf6NTZC8Y
+    githubClientId: ${GIT_CLIENT_ID}
 logging:
   file:
     name: logs/app.log           # 日志文件路径（相对项目根目录）

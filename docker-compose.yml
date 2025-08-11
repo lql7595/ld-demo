@@ -77,6 +77,7 @@ services:
       LDAP_USER: cn=admin,dc=liz,dc=cn
       LDAP_PASSWORD: 123456
       GIT_SECRET: ${GIT_SECRET}
+      # GIT_CLIENT_ID: ${GIT_CLIENT_ID}
     container_name: ld-backend
     depends_on:
       ld-nacos:

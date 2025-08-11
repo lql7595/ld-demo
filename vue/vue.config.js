@@ -11,7 +11,7 @@ module.exports = defineConfig({
     https: false, // 是否使用HTTPS
     proxy: {
       '/demo': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:7573',
         changeOrigin: true,
         secure: false,
         logLevel: 'debug'
