@@ -62,7 +62,7 @@ services:
     build:
       context: ./Cloud-Demo/Product/
     ports:
-      - "8000:8000"
+      - "7573:7573"
     environment:
       ACTIVE_PROFILE: prod
       NACOS_URL: ld-nacos:8848
