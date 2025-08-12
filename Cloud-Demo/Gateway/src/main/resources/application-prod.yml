@@ -26,15 +26,6 @@ spring:
           uri: lb://product-service
           predicates:
             - Path=/demo/product/**
-    sentinel:
-      transport:
-        dashboard: localhost:8080
-      eager: true
-      scg:
-        fallback:
-          mode: response
-          response-status: 429
-          response-body: {"code": 429, "message": "服务繁忙，请稍后重试"}
 
 logging:
   level:

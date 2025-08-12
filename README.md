@@ -8,15 +8,17 @@
 ## 0.写在前面：
     0.回答面试老师问题：
         1.实现一个docker-compose.yml： 鉴于您要执行mvn clean package 。我就没有将构建编排到docker-compose中。但是我提供了在同一个目录层级构建项目的指令。
+          mvn -f Cloud-Demo/pom.xml clean package -DskipTests
+          docker compose up -d --build
         2.实现Uaa用户认证（数据库、GITHUB oauth、 LDAP登录）
         3.使用mysql作为关系型数据库（制作了自己的mysql镜像，上传到docker-hub上，可直接拉取下载，其中有demo需要的用户信息）。
         4.使用oxiasia的 openldap镜像搭建ldap服务。
-        5.Getway采用了nginx，服务端端口为7573。但是监听的是80端口 以及 代理 \demo 才会转发给后端服务。
+        5.同时使用了 Getway 和 nginx。Gateway端口号：7573， nginx用来代理 \demo 转发给网关服务。
         6.Configure 和 Discovery使用了 Nacos（未持久化，后文给出配置路径可验证配置中心功能）。
         7.微服务架构：User服务（端口7571）负责用户认证和权限管理，Product服务（端口7570）负责产品管理，两服务通过OpenFeign进行通信。
         8.如面试老师在本地无法正常启动，可以先访问我的服务器来验证功能。www.lizable.cn
         9.感谢老师，希望得到面试老师的指正。谢谢！
-        10.curl清单和结果见文末或者Cloud-Demo\README.md
+        10.curl清单和结果见文末的第11点内容。
     1.项目已部署在 www.lizable.cn 欢迎访问。
     2.项目在一键部署前，需要 手动maven构建！！！ 详见5. 启动步骤
     3.mysql的初始化数据已集成在我自构建的镜像中，启动即可用，无需初始化。
@@ -164,52 +166,116 @@ docker exec -it ld-vue sh
 
 ## 11. Controller 层接口的 CURL 测试用例
 
-### 用户认证接口
+### 测试账号信息
+
+#### 本地用户账号
+- **USER角色**: `user_1` / `user_1`
+- **EDITOR角色**: `editor_1` / `editor_1`
+- **ADMIN角色**: `adm_1` / `adm_1`
+
+#### LDAP用户账号
+- **USER角色**: `ldap_user_1` / `ldap_user_1`
+- **EDITOR角色**: `ldap_editor_1` / `ldap_editor_1`
+- **ADMIN角色**: `ldap_adm_1` / `ldap_adm_1`
+
+### 权限说明
+
+#### 产品管理权限
+- **USER角色**: 只能查询产品列表
+- **EDITOR角色**: 可以查询、添加、更新、删除产品
+- **ADMIN角色**: 拥有所有权限
+
+#### 使用步骤
+1. 先使用登录接口获取token
+2. 将返回的token替换到后续请求的`YOUR_TOKEN_HERE`位置
+3. 根据用户角色测试不同的权限功能
+
+### 示例完整流程
+
+```bash
+# 1. 登录获取token
+TOKEN=$(curl -s -X POST http://localhost:7573/demo/user/sys/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userLogin": "editor_1",
+    "pwd": "editor_1",
+    "loginType": 1
+  }' | jq -r '.data')
+
+echo "获取到的token: $TOKEN"
+
+# 2. 查询产品列表
+curl -X POST http://localhost:7573/demo/product/bus/query/infolist \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"userLogin\": \"editor_1\",
+    \"token\": \"$TOKEN\",
+    \"loginType\": 1,
+    \"cur\": 1,
+    \"size\": 10
+  }"
+
+# 3. 添加产品
+curl -X POST http://localhost:7573/demo/product/bus/add/info \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"userLogin\": \"editor_1\",
+    \"token\": \"$TOKEN\",
+    \"loginType\": 1,
+    \"productName\": \"新测试产品\"
+  }"
+```
+
+### 注意事项
+
+1. **端口说明**: 所有请求都通过网关端口7573访问
+2. **路径说明**: 网关会自动路由到对应的微服务
+3. **Token格式**: 登录成功后返回的token需要包含在后续请求中
+4. **权限验证**: 不同角色的用户只能访问对应的功能
+5. **错误处理**: 如果token无效或权限不足，会返回相应的错误信息
 
 #### 本地用户登录
 ```bash
-curl -X POST http://localhost:8000/demo/sys/login \
+curl -X POST http://localhost:7573/demo/user/sys/login \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "testuser",
-    "password": "password123"
+    "userLogin": "user_1",
+    "pwd": "user_1",
+    "loginType": 1
   }'
 ```
 
 #### LDAP 登录
 ```bash
-curl -X POST http://localhost:8000/demo/sys/login/ldap \
+curl -X POST http://localhost:7573/demo/user/sys/login/ldap \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "ldapuser",
-    "password": "ldappass"
+    "userLogin": "ldap_user_1",
+    "pwd": "ldap_user_1",
+    "loginType": 3
   }'
 ```
 
-#### GitHub OAuth 登录
-```bash
-# 获取授权URL
-curl -X GET "http://localhost:8000/demo/sys/login/github"
-
-# OAuth回调
-curl -X GET "http://localhost:8000/demo/sys/oauth/callback?code=YOUR_CODE"
-```
 
 #### 查询用户信息
 ```bash
-curl -X POST http://localhost:8000/demo/sys/query/userinfo \
+curl -X POST http://localhost:7573/demo/user/sys/query/userinfo \
   -H "Content-Type: application/json" \
   -d '{
-    "token": "YOUR_TOKEN"
+    "userLogin": "user_1",
+    "token": "YOUR_TOKEN_HERE",
+    "loginType": 1
   }'
 ```
 
 #### 用户登出
 ```bash
-curl -X POST http://localhost:8000/demo/sys/logout \
+curl -X POST http://localhost:7573/demo/user/sys/logout \
   -H "Content-Type: application/json" \
   -d '{
-    "token": "YOUR_TOKEN"
+    "userLogin": "user_1",
+    "token": "YOUR_TOKEN_HERE",
+    "loginType": 1
   }'
 ```
 
@@ -217,46 +283,52 @@ curl -X POST http://localhost:8000/demo/sys/logout \
 
 #### 查询产品列表
 ```bash
-curl -X POST http://localhost:8000/demo/bus/query/infolist \
+curl -X POST http://localhost:7573/demo/product/bus/query/infolist \
   -H "Content-Type: application/json" \
   -d '{
-    "pageNum": 1,
-    "pageSize": 10,
-    "token": "YOUR_TOKEN"
+    "userLogin": "user_1",
+    "token": "YOUR_TOKEN_HERE",
+    "loginType": 1,
+    "cur": 1,
+    "size": 10,
+    "keyFuzzy": "",
+    "keyId": 0
   }'
 ```
 
 #### 添加产品信息
 ```bash
-curl -X POST http://localhost:8000/demo/bus/add/info \
+curl -X POST http://localhost:7573/demo/product/bus/add/info \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
-    "productName": "测试产品",
-    "description": "产品描述",
-    "token": "YOUR_TOKEN"
+    "userLogin": "editor_1",
+    "token": "YOUR_TOKEN_HERE",
+    "loginType": 1,
+    "productName": "测试产品"
   }'
 ```
 
 #### 更新产品信息
 ```bash
-curl -X POST http://localhost:8000/demo/bus/update/info \
+curl -X POST http://localhost:7573/demo/product/bus/update/info \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
+    "userLogin": "editor_1",
+    "token": "YOUR_TOKEN_HERE",
+    "loginType": 1,
     "id": 1,
-    "productName": "更新后的产品名",
-    "token": "YOUR_TOKEN"
+    "newPrdName": "更新后的产品名"
   }'
 ```
 
 #### 删除产品信息
 ```bash
-curl -X POST http://localhost:8000/demo/bus/del/info \
+curl -X POST http://localhost:7573/demo/product/bus/del/info \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
-    "id": 1,
-    "token": "YOUR_TOKEN"
+    "userLogin": "editor_1",
+    "token": "YOUR_TOKEN_HERE",
+    "loginType": 1,
+    "id": 1
   }'
 ```

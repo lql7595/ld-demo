@@ -35,15 +35,6 @@ spring:
             - Path=/demo/product/**
           filters:
             - StripPrefix=0  # 不剥离前缀，保持完整路径
-    sentinel:
-      transport:
-        dashboard: 47.106.76.165:8080
-      eager: true
-      scg:
-        fallback:
-          mode: response
-          response-status: 429
-          response-body: {"code": 429, "message": "服务繁忙，请稍后重试"}
 
 logging:
   level:
