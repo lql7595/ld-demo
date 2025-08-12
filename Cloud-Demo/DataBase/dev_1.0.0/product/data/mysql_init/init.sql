@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS demo_db;
+USE demo_db;
+
 create table pd_product_info (
 id int not null AUTO_INCREMENT,
 product_name varchar(300) null,

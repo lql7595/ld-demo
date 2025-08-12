@@ -2,10 +2,14 @@ version: '3.8'
 
 services:
   ld-mysql:
-    image: ld-mysql-data
+    image: mysql:8.0
     container_name: ld-mysql
     environment:
-      MYSQL_DATABASE: demo_pd
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: demo_db
+    volumes:
+      - ./DataBase/dev_1.0.0/product/data/mysql_init:/docker-entrypoint-initdb.d  # 挂载初始化脚本
+      - ld-mysql-data:/var/lib/mysql  # 持久化数据
     ports:
       - "3306:3306"
     networks:
@@ -152,4 +156,5 @@ networks:
 volumes:
   ld-ldap_data:
   ld-ldap_config:
+  ld-mysql-data:
 
