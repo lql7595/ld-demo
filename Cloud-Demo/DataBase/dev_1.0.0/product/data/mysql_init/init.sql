@@ -1,11 +1,16 @@
-CREATE DATABASE IF NOT EXISTS demo_pd;
+SET GLOBAL character_set_server = utf8mb4;
+SET GLOBAL collation_server = utf8mb4_unicode_ci;
+
+CREATE DATABASE IF NOT EXISTS demo_pd
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
 USE demo_pd;
 
 create table pd_product_info (
 id int not null AUTO_INCREMENT,
 product_name varchar(300) null,
 primary key (id)
-) engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 insert into pd_product_info (product_name)
@@ -21,7 +26,7 @@ user_name_3 varchar(100) null,
 user_type int null,
 pwd varchar(500) null,
 primary key (id)
-) engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 insert into user_info (user_id, user_name, user_name_2, user_name_3, user_type, pwd)
@@ -35,7 +40,7 @@ id int not null AUTO_INCREMENT,
 user_id varchar(100) not null,
 role_tp varchar(50) not null,
 primary key (id)
-) engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 insert into user_role_t (user_id, role_tp)
 values
@@ -57,7 +62,7 @@ values
 -- grand_role_tp varchar(50) not null,
 -- rela_level int null,
 -- primary key (id)
--- ) engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- ) engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 --
 --
 -- insert into role_relation_t (role_tp, parrent_role_tp,grand_role_tp,rela_level)
@@ -76,7 +81,7 @@ values
 create table role_relation_t (
 role_tp varchar(50) not null,
 role_tp_rela varchar(50) not null
-) engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 insert into role_relation_t (role_tp, role_tp_rela)
