@@ -22,13 +22,12 @@ import org.springframework.stereotype.Component;
 public class TokenVerifyAspect {
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    StringRedisTemplate redisTemplate;
 
     @Before("@annotation(tokenVerifyAnnotation)")
     public void verifyToken(JoinPoint joinPoint, TokenVerifyAnnotation tokenVerifyAnnotation) {
         log.info("------------verify token ----------");
         log.info("request method name:{}", joinPoint.getSignature().getName());
-
 
         BaseRequest baseRequest = null;
         for (Object arg : joinPoint.getArgs()) {
@@ -62,5 +61,6 @@ public class TokenVerifyAspect {
             log.info("user:{} token:{} redisToken:{} .... verify failure.", userLogin, token, rdToken);
             throw new TokenVerifyException(ErrorCode.USER_TOKEN_VERIFY_FAILURE_ERROR);
         }
+
     }
 }

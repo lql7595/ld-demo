@@ -15,7 +15,16 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-    max-wait: 60000
+    druid:
+      initial-size: 1
+      min-idle: 1
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      max-evictable-idle-time-millis: 900000
+      validation-query: SELECT 1
+      test-while-idle: true
   data:
     redis:
       host: 47.106.76.165  # 确保这里是 localhost
@@ -29,8 +38,3 @@ spring:
           max-wait: -1ms
           max-idle: 8
           min-idle: 1
-  ldap:
-    urls: ldap://47.106.76.165:389
-    base: dc=liz,dc=cn
-    username: cn=admin,dc=liz,dc=cn
-    password: 123456

@@ -20,4 +20,5 @@ public interface UserService {
     BaseResponse githubCallback(String code);
 
     BaseResponse logout(BaseRequest request);
+
 }

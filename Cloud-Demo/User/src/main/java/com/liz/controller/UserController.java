@@ -8,13 +8,12 @@ import com.liz.config.MyConfig;
 import com.liz.constant.ErrorCode;
 import com.liz.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/sys")
@@ -44,9 +43,7 @@ public class UserController {
     @GetMapping("/login/github")
     public BaseResponse redirectToGithub(HttpServletResponse response) throws IOException {
         String url = myConfig.getGithubAuthUrl() + "?client_id=" + myConfig.getGithubClientId();
-//        response.sendRedirect(url);
         return BaseResponse.success(ErrorCode.SUCCESS, url);
-
     }
 
     @GetMapping("/oauth/callback")
@@ -54,10 +51,14 @@ public class UserController {
         return userService.githubCallback(code);
     }
 
-
     @PostMapping("/logout")
     @TokenVerifyAnnotation
     public BaseResponse logout(@RequestBody BaseRequest request) {
         return userService.logout(request);
+    }
+
+    @GetMapping("/internal/role/rela")
+    public Set<String> getRoleRela(@RequestParam("role") String role) {
+        return userService.getRoleRela(role);
     }
 }

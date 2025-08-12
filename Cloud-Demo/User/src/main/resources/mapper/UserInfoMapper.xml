@@ -37,9 +37,6 @@
 
     <select id="queryAllRoleRela" resultType="com.liz.bean.entity.RoleRelationTEntity">
         select role_tp as roleTp, role_tp_rela as roleTpRela from role_relation_t
-
     </select>
 
-
 </mapper>
-

@@ -13,7 +13,7 @@
         4.使用oxiasia的 openldap镜像搭建ldap服务。
         5.Getway采用了nginx，服务端端口为7573。但是监听的是80端口 以及 代理 \demo 才会转发给后端服务。
         6.Configure 和 Discovery使用了 Nacos（未持久化，后文给出配置路径可验证配置中心功能）。
-        7.Product服务 Cloud-Demo\Product 项目包含了登录和Product功能。
+        7.微服务架构：User服务（端口7571）负责用户认证和权限管理，Product服务（端口7570）负责产品管理，两服务通过OpenFeign进行通信。
         8.如面试老师在本地无法正常启动，可以先访问我的服务器来验证功能。www.lizable.cn
         9.感谢老师，希望得到面试老师的指正。谢谢！
         10.curl清单和结果见文末或者Cloud-Demo\README.md
@@ -38,7 +38,9 @@
 ```
 ld-demo/
 ├── Cloud-Demo/           # 后端工程与数据库脚本
-│   ├── Product/          # 后端服务（Spring Boot）
+│   ├── Product/          # 产品服务（Spring Boot）
+│   ├── User/             # 用户服务（Spring Boot）
+│   ├── Gateway/          # 网关服务（Spring Boot）
 │   └── DataBase/         # 初始化 SQL（记录）
 ├── ldap-init/            # LDAP 初始化数据（LDIF）（实际初始化用）
 ├── vue/                  # 前端应用（Vue 3 + Nginx）
@@ -50,12 +52,14 @@ ld-demo/
 - ld-redis: bitnami/redis（默认 6379:6379，密码 123456）
 - ld-ldap: osixia/openldap（389/636，基于 `ldap-init/` 自动导入初始数据）
 - ld-nacos: nacos/nacos-server:v2.4.3（8848/9848，单机模式）
-- ld-backend: 后端服务（8000:8000，Spring Boot 3，JDK 17）
+- ld-product: 产品服务（7570，Spring Boot 3，JDK 17）
+- ld-user: 用户服务（7571，Spring Boot 3，JDK 17）
+- ld-gateway: 网关服务（7573:7573，Spring Boot 3，JDK 17）
 - ld-vue: 前端服务（80:80，Nginx，反代后端 `/demo`）
 
 访问入口：
 - 前端站点: http://localhost
-- 后端接口: http://localhost:8000/demo
+- 网关服务接口: http://localhost:7573/
 - Nacos 控制台: http://localhost:8848/nacos
 
 ### 4. 前置要求
@@ -68,6 +72,8 @@ ld-demo/
 ```bash
 # 在项目根目录执行
 mvn -f Cloud-Demo/Product/pom.xml clean package -DskipTests
+mvn -f Cloud-Demo/User/pom.xml clean package -DskipTests
+mvn -f Cloud-Demo/Gateway/pom.xml clean package -DskipTests
 ```
 
 2) 配置环境变量（GitHub OAuth 可选）
@@ -83,11 +89,19 @@ docker compose up -d --build
 
 4) 验证服务
 - 前端: http://localhost
-- 后端健康（示例接口）: http://localhost:8000/demo/sys/login/github
 - Nacos: http://localhost:8848/nacos
 
 ### 6. 环境变量与配置对照
-- 后端容器（ld-backend）主要变量（已在编排中设置）：
+- 产品服务容器（ld-product）主要变量（已在编排中设置）：
+  - ACTIVE_PROFILE=prod
+  - NACOS_URL=ld-nacos:8848
+  - MYSQL_URL=ld-mysql:3306
+  - MYSQL_NAME=demo_pd
+  - MYSQL_USER=root
+  - MYSQL_PASSWORD=123456
+  - REDIS_HOST=ld-redis
+  - REDIS_PASSWORD=123456
+- 用户服务容器（ld-user）主要变量（已在编排中设置）：
   - ACTIVE_PROFILE=prod
   - NACOS_URL=ld-nacos:8848
   - MYSQL_URL=ld-mysql:3306
@@ -101,6 +115,7 @@ docker compose up -d --build
   - LDAP_USER=cn=admin,dc=liz,dc=cn
   - LDAP_PASSWORD=123456
   - GIT_SECRET=从宿主 `.env` 注入
+  - GIT_CLIENT_ID_=从宿主 `.env` 注入
 
 - 前端容器（ld-vue）
   - 构建阶段会将 `./.env.production` 复制为 `.env`，默认将 API 指向 `/demo`，由 Nginx 反向代理到后端。
@@ -124,19 +139,16 @@ docker compose up -d --build
 ### 8. 常用命令
 ```bash
 # 启动/关闭/重启
-docker compose up -d
+docker compose up -d --build
 docker compose down
-docker compose restart ld-backend
 
 # 查看日志
-docker compose logs -f ld-backend
 docker compose logs -f ld-vue
 
 # 重新构建（变更 Dockerfile 或前端/后端代码后）
 docker compose build --no-cache
 
 # 进入容器
-docker exec -it ld-backend sh
 docker exec -it ld-vue sh
 ```
 

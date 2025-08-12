@@ -16,6 +16,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>Product</module>
+        <module>User</module>
+        <module>Gateway</module>
     </modules>
 
     <properties>
@@ -23,6 +25,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-cloud-alibaba.version>2023.0.3.2</spring-cloud-alibaba.version>
+        <spring-cloud.version>2023.0.3</spring-cloud.version>
     </properties>
 
 
@@ -35,7 +38,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

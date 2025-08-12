@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class RoleRelationTEntity {
-    String roleTp;
-    String roleTpRela;
+
+    private String roleTp;
+
+    private String roleTpRela;
 }

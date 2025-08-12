@@ -1,13 +1,15 @@
 package com.liz.aspect;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.liz.anno.AuthVerifyAnnotation;
 import com.liz.bean.request.BaseRequest;
-import com.liz.bean.response.BaseResponse;
+import com.liz.bean.vo.UserRoleInfoVO;
 import com.liz.constant.Constant;
 import com.liz.constant.ErrorCode;
 import com.liz.exception.AuthVerifyException;
-import com.liz.feign.UserServiceFeign;
+import com.liz.mapper.UserInfoMapper;
+import com.liz.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,6 +17,7 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -29,13 +32,17 @@ import static com.liz.constant.ErrorCode.USER_NO_USER_ERROR;
 public class AuthVerifyAspect {
 
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    UserInfoMapper userInfoMapper;
     @Autowired
-    private UserServiceFeign userServiceFeign;
+    UserService userService;
+    @Autowired
+    LdapTemplate ldapTemplate;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Before("@annotation(authVerifyAnnotation)")
     public void verifyAuth(JoinPoint joinPoint, AuthVerifyAnnotation authVerifyAnnotation) {
-        log.info("------------verify auth ----------");
+        log.info("------------verify token ----------");
         log.info("request method name:{}", joinPoint.getSignature().getName());
 
         BaseRequest baseRequest = null;
@@ -79,12 +86,15 @@ public class AuthVerifyAspect {
                 log.info("可能遇到了错误的token存储在redis 中。key：{}， values：{}", Constant.REDIS_TOKEN_KEY_PREFIX + userLogin, rdToken);
             }
         }
-        if (role.isEmpty()) {
-            log.info("没有获取到正确的用户角色信息。 role:{}", role);
-            throw new AuthVerifyException(USER_AUTH_ERROR);
-        }
+        if (role.isEmpty()){
+            UserRoleInfoVO dbInfo = userInfoMapper.queryUserRoleInfo(userLogin);
+            if (dbInfo == null || CollUtil.isEmpty(dbInfo.getRoleTpList())) {
+                throw new AuthVerifyException(USER_AUTH_ERROR);
+            }
+            role = dbInfo.getUserRoleTp();
 
-        Set<String> roleRela = userServiceFeign.getRoleRela(role);
+        }
+        Set<String> roleRela = userService.getRoleRela(role);
         if (roleRela == null || roleRela.isEmpty()) {
             log.info("没有获取到正确的用户角色信息。 role:{}", role);
             throw new AuthVerifyException(USER_AUTH_ERROR);
@@ -99,6 +109,8 @@ public class AuthVerifyAspect {
         }
         if (!hasAuthFlag) {
             throw new AuthVerifyException(USER_AUTH_ERROR);
+
         }
     }
+
 }

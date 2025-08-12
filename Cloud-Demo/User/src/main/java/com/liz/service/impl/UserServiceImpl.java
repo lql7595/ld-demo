@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -44,7 +43,6 @@ public class UserServiceImpl implements UserService {
     private LdapTemplate ldapTemplate;
     Lock lock = new ReentrantLock(true);
 
-
     @Override
     public BaseResponse login(LoginUserRequest request) {
         UserInfoEntity dbUserInfo = userInfoMapper.queryUserInfo(request.getUserLogin());
@@ -56,16 +54,12 @@ public class UserServiceImpl implements UserService {
             return BaseResponse.failure(ErrorCode.USER_USER_PWD_ERROR);
         }
 
-
         UserRoleInfoVO roleInfoVO = userInfoMapper.queryUserRoleInfo(dbUserInfo.getUserId());
-
 
         String token = setToken(dbUserInfo.getUserId(), roleInfoVO.getUserRoleTp());
 
-
         return BaseResponse.success(ErrorCode.SUCCESS, token);
     }
-
 
     @Override
     public BaseResponse queryUserInfo(BaseRequest request) {
@@ -131,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public BaseResponse logout(BaseRequest request) {
-        redisTemplate.delete(Constant.REDIS_TOKEN_KEY_PREFIX + request.getLoginType());
+        redisTemplate.delete(Constant.REDIS_TOKEN_KEY_PREFIX + request.getUserLogin());
         return BaseResponse.success();
     }
 

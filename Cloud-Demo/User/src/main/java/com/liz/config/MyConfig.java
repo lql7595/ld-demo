@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "cus.product")
+@ConfigurationProperties(prefix = "cus.user")
 @Data
 public class MyConfig {
 
@@ -20,12 +20,6 @@ public class MyConfig {
 
     private String githubAccTokenUrl;
 
-    @Value("${GIT_SECRET}")
     private String githubClientSecret;
 
-    public static void main(String[] args) {
-        System.out.println(System.getenv("GIT_SECRET"));
-        System.out.println(System.getenv("JAVA_HOME"));
-        System.out.println(System.getenv("HADOOP_HOME"));
-    }
 }

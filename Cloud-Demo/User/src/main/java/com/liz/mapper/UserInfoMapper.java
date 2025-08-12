@@ -9,7 +9,6 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-
 @Mapper
 public interface UserInfoMapper extends BaseMapper<UserInfoEntity> {
 
@@ -20,4 +19,3 @@ public interface UserInfoMapper extends BaseMapper<UserInfoEntity> {
     List<RoleRelationTEntity> queryAllRoleRela();
 
 }
-

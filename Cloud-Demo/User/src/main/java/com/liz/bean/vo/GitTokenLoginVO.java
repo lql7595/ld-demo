@@ -8,8 +8,6 @@ public class GitTokenLoginVO {
     private String userLogin;
 
     private String token;
-    /**
-     * 1.密码登录 2. github登录 3.ldap登录
-     */
-    private int loginType = 2;
+
+    private String userRoleTp;
 }

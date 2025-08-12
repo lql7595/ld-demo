@@ -58,11 +58,34 @@ services:
     networks:
       - ld-net
 
-  ld-backend:
+  ld-product:
     build:
       context: ./Cloud-Demo/Product/
-    ports:
-      - "7573:7573"
+    environment:
+      ACTIVE_PROFILE: prod
+      NACOS_URL: ld-nacos:8848
+      MYSQL_URL: ld-mysql:3306
+      MYSQL_NAME: demo_pd
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 123456
+      REDIS_HOST: ld-redis
+      REDIS_PASSWORD: 123456
+    container_name: ld-product
+    depends_on:
+      ld-nacos:
+        condition: service_healthy
+      ld-mysql:
+        condition: service_started
+      ld-redis:
+        condition: service_started
+      ld-ldap:
+        condition: service_started
+    networks:
+      - ld-net
+
+  ld-user:
+    build:
+      context: ./Cloud-Demo/User/
     environment:
       ACTIVE_PROFILE: prod
       NACOS_URL: ld-nacos:8848
@@ -78,7 +101,7 @@ services:
       LDAP_PASSWORD: 123456
       GIT_SECRET: ${GIT_SECRET}
       # GIT_CLIENT_ID: ${GIT_CLIENT_ID}
-    container_name: ld-backend
+    container_name: ld-user
     depends_on:
       ld-nacos:
         condition: service_healthy
@@ -87,6 +110,25 @@ services:
       ld-redis:
         condition: service_started
       ld-ldap:
+        condition: service_started
+    networks:
+      - ld-net
+
+  ld-gateway:
+    build:
+      context: ./Cloud-Demo/Gateway/
+    ports:
+      - "7573:7573"
+    environment:
+      ACTIVE_PROFILE: prod
+      NACOS_URL: ld-nacos:8848
+      REDIS_HOST: ld-redis
+      REDIS_PASSWORD: 123456
+    container_name: ld-gateway
+    depends_on:
+      ld-nacos:
+        condition: service_healthy
+      ld-redis:
         condition: service_started
     networks:
       - ld-net

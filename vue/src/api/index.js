@@ -67,26 +67,26 @@ api.interceptors.response.use(
 export const loginAPI = {
   // 密码登录
   passwordLogin: (userLogin, pwd) => {
-    return api.post('/sys/login', { userLogin, pwd, loginType: 1 })
+    return api.post('/user/sys/login', { userLogin, pwd, loginType: 1 })
   },
   
   // LDAP登录
   ldapLogin: (userLogin, pwd) => {
-    return api.post('/sys/login/ldap', { userLogin, pwd, loginType:3 })
+    return api.post('/user/sys/login/ldap', { userLogin, pwd, loginType:3 })
   },
   
   // GitHub登录
   githubLogin: () => {
-    return api.get('/sys/login/github')
+    return api.get('/user/sys/login/github')
   },
   
   // GitHub回调处理
   githubCallback: (code) => {
-    return api.get('/sys/oauth/callback?code=' + code )
+    return api.get('/user/sys/oauth/callback?code=' + code )
   },
 
   logout: () => {
-    return api.post('/sys/logout')
+    return api.post('/user/sys/logout')
   }
 }
 
@@ -94,22 +94,22 @@ export const loginAPI = {
 export const productAPI = {
   // 获取商品列表
   getProducts: () => {
-    return api.post('/bus/query/infolist')
+    return api.post('/product/bus/query/infolist')
   },
   
   // 创建商品
   createProduct: (product) => {
-    return api.post('/bus/add/info', product)
+    return api.post('/product/bus/add/info', product)
   },
   
   // 更新商品
   updateProduct: (product) => {
-    return api.post(`/bus/update/info`, product)
+    return api.post(`/product/bus/update/info`, product)
   },
   
   // 删除商品
   deleteProduct: (id) => {
-    return api.post(`/bus/del/info`, id)
+    return api.post(`/product/bus/del/info`, id)
   }
 }
 

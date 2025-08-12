@@ -38,3 +38,8 @@ spring:
           max-wait: -1ms
           max-idle: 8
           min-idle: 1
+  ldap:
+    urls: ldap://${LDAP_HOST}:389
+    base: ${LDAP_BASE}
+    username: ${LDAP_USER}
+    password: ${LDAP_PASSWORD}

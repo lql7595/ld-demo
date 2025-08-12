@@ -6,24 +6,16 @@ import lombok.Getter;
 @Getter
 public class AuthVerifyException extends RuntimeException {
 
-
     private final ErrorCode errorCode;
-    private final int code;
-    private final String message;
 
+    AuthVerifyException(ErrorCode errorCode, String message) {
+        super(message);
+        this.errorCode  = errorCode;
+    }
 
     public AuthVerifyException(ErrorCode errorCode) {
         super(errorCode.getMsg());
         this.errorCode  = errorCode;
-        this.code = errorCode.getErrorCode();
-        this.message = errorCode.getMsg();
     }
-    public AuthVerifyException(int code, String message) {
-        super(message);
-        this.code = code;
-        this.message = message;
-        errorCode = null;
-    }
-
 
 }
