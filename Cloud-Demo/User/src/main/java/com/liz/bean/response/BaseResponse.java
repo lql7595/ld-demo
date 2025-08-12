@@ -1,6 +1,7 @@
 package com.liz.bean.response;
 
-import com.alibaba.fastjson.JSON;
+import cn.hutool.json.JSONNull;
+import cn.hutool.json.JSONUtil;
 import com.liz.constant.ErrorCode;
 import lombok.Data;
 
@@ -43,6 +44,6 @@ public class BaseResponse<T> {
 
     
     public String toString() {
-        return JSON.toJSONString(this);
+        return JSONUtil.toJsonStr(this);
     }
 }
