@@ -13,6 +13,6 @@ vue-vite/dist/
 # Java
 Cloud-Demo/.idea/
 Cloud-Demo/logs/
-Cloud-Demo/Product/target/
-Cloud-Demo/Product/src/test/
+Cloud-Demo/*/target/
+Cloud-Demo/*/src/test/
 logs/
