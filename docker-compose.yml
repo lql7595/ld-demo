@@ -12,6 +12,11 @@ services:
       - ld-mysql-data:/var/lib/mysql  # 持久化数据
     ports:
       - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
     networks:
       - ld-net
 
@@ -79,7 +84,7 @@ services:
       ld-nacos:
         condition: service_healthy
       ld-mysql:
-        condition: service_started
+        condition: service_healthy
       ld-redis:
         condition: service_started
       ld-ldap:
@@ -110,7 +115,7 @@ services:
       ld-nacos:
         condition: service_healthy
       ld-mysql:
-        condition: service_started
+        condition: service_healthy
       ld-redis:
         condition: service_started
       ld-ldap:
