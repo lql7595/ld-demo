@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS demo_db;
-USE demo_db;
+CREATE DATABASE IF NOT EXISTS demo_pd;
+USE demo_pd;
 
 create table pd_product_info (
 id int not null AUTO_INCREMENT,
