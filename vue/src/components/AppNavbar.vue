@@ -13,10 +13,14 @@
 </template>
 
 <script>
+import { loginAPI } from '../api'
+
 export default {
   name: 'AppNavbar',
   methods: {
-    handleLogout() {
+    async handleLogout() {
+      const response = await loginAPI.logout()
+      console.log(response)
       localStorage.removeItem('token')
       localStorage.removeItem('userLogin')
       this.$router.push('/login')
