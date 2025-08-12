@@ -3,7 +3,7 @@
 ## -1.写在前面的前面：
     理论启动步骤：
         a. 添加GIT_CLIENT_ID 和 GIT_SECRET 环境变量（回调地址请填写：http://你的vue配置host:端口号/callback）。
-        b. 构建后端项目： mvn -f Cloud-Demo/Product/pom.xml clean package -DskipTests
+        b. 构建后端项目： mvn -f Cloud-Demo/pom.xml clean package -DskipTests
         c. docker编排： docker compose up -d --build
 ## 0.写在前面：
     0.回答面试老师问题：
@@ -71,9 +71,7 @@ ld-demo/
 1) 打包后端 JAR
 ```bash
 # 在项目根目录执行
-mvn -f Cloud-Demo/Product/pom.xml clean package -DskipTests
-mvn -f Cloud-Demo/User/pom.xml clean package -DskipTests
-mvn -f Cloud-Demo/Gateway/pom.xml clean package -DskipTests
+mvn -f Cloud-Demo/pom.xml clean package -DskipTests
 ```
 
 2) 配置环境变量（GitHub OAuth 可选）
@@ -121,7 +119,7 @@ docker compose up -d --build
   - 构建阶段会将 `./.env.production` 复制为 `.env`，默认将 API 指向 `/demo`，由 Nginx 反向代理到后端。
 
 - Nginx（前端容器内）
-  - `nginx.conf` 中将 `/demo` 代理到 `ld-backend:8000`。
+  - `nginx.conf` 中将 `/demo` 代理到 `ld-gateway:7573`。
 
 ### 7. 初始化数据与账号
 - MySQL（演示库 demo_pd）
@@ -153,28 +151,112 @@ docker exec -it ld-vue sh
 ```
 
 ### 9. 典型问题与注意事项
-- 后端 JAR 未打包：ld-backend 的 Dockerfile 会从 `target/*.jar` 复制，请先执行 Maven 打包。
-- MySQL 镜像 ld-mysql-data：该镜像需在本机存在（或你可改为官方 `mysql:8` 并挂载初始化 SQL）。若未准备自定义镜像，建议：
-  - 将 `docker-compose.yml` 的 `ld-mysql` 服务替换为官方 MySQL 镜像，并配置 `MYSQL_ROOT_PASSWORD`、挂载 `init.sql`。
-- 端口占用：确保 80/8000/3306/6379/389/636/8848 未被占用。
-- Windows/WSL2：389/636（LDAP）在部分平台需管理员权限或防火墙放行。
+- 后端 JAR 未打包：请先执行 Maven 打包。
 - GitHub OAuth：需在根目录 `.env` 配置 `GIT_SECRET`；后端还需在 Nacos 或配置中心设置 `githubClientId` 对应值。
 - Nacos 准备时间：已配置健康检查，首次启动可能需要数十秒，请耐心等待后端依赖就绪。
 - 安全性：默认密码仅用于演示，生产请务必修改 Redis/MySQL/LDAP 密码与外网暴露策略（或移除端口映射）。
 
-### 10. 清理与重置
-```bash
-# 停止并移除容器、网络
-docker compose down
-
-# 移除含匿名卷（会清空 LDAP 数据卷）
-docker compose down -v
-
-# 清理构建缓存
-docker system prune -f
-```
-
-### 11. 版本与依赖提示
+### 10. 版本与依赖提示
 - 后端运行时基于 **OpenJDK 17**（镜像 `openjdk:17-jdk-slim`）
 - 前端构建阶段基于 **Node 22 (alpine)**，运行时基于 **Nginx 1.26**
 - Nacos v2.4.3，Redis（bitnami），OpenLDAP（osixia）
+
+
+## 11. Controller 层接口的 CURL 测试用例
+
+### 用户认证接口
+
+#### 本地用户登录
+```bash
+curl -X POST http://localhost:8000/demo/sys/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "testuser",
+    "password": "password123"
+  }'
+```
+
+#### LDAP 登录
+```bash
+curl -X POST http://localhost:8000/demo/sys/login/ldap \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "ldapuser",
+    "password": "ldappass"
+  }'
+```
+
+#### GitHub OAuth 登录
+```bash
+# 获取授权URL
+curl -X GET "http://localhost:8000/demo/sys/login/github"
+
+# OAuth回调
+curl -X GET "http://localhost:8000/demo/sys/oauth/callback?code=YOUR_CODE"
+```
+
+#### 查询用户信息
+```bash
+curl -X POST http://localhost:8000/demo/sys/query/userinfo \
+  -H "Content-Type: application/json" \
+  -d '{
+    "token": "YOUR_TOKEN"
+  }'
+```
+
+#### 用户登出
+```bash
+curl -X POST http://localhost:8000/demo/sys/logout \
+  -H "Content-Type: application/json" \
+  -d '{
+    "token": "YOUR_TOKEN"
+  }'
+```
+
+### 产品管理接口
+
+#### 查询产品列表
+```bash
+curl -X POST http://localhost:8000/demo/bus/query/infolist \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pageNum": 1,
+    "pageSize": 10,
+    "token": "YOUR_TOKEN"
+  }'
+```
+
+#### 添加产品信息
+```bash
+curl -X POST http://localhost:8000/demo/bus/add/info \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "productName": "测试产品",
+    "description": "产品描述",
+    "token": "YOUR_TOKEN"
+  }'
+```
+
+#### 更新产品信息
+```bash
+curl -X POST http://localhost:8000/demo/bus/update/info \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "id": 1,
+    "productName": "更新后的产品名",
+    "token": "YOUR_TOKEN"
+  }'
+```
+
+#### 删除产品信息
+```bash
+curl -X POST http://localhost:8000/demo/bus/del/info \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "id": 1,
+    "token": "YOUR_TOKEN"
+  }'
+```
