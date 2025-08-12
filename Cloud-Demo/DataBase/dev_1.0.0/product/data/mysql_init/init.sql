@@ -1,3 +1,6 @@
+-- UTF-8 encoding declaration
+-- 确保文件以UTF-8编码保存，无BOM头
+
 SET GLOBAL character_set_server = utf8mb4;
 SET GLOBAL collation_server = utf8mb4_unicode_ci;
 
@@ -5,6 +8,10 @@ CREATE DATABASE IF NOT EXISTS demo_pd
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 USE demo_pd;
+
+-- 设置当前会话字符集
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
 
 create table pd_product_info (
 id int not null AUTO_INCREMENT,
