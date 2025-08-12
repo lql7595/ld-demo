@@ -23,7 +23,7 @@ cus:
     githubAuthUrl: https://github.com/login/oauth/authorize
     githubAccTokenUrl: https://github.com/login/oauth/access_token
     githubClientId: ${GIT_CLIENT_ID}
-    GIT_SECRET: ${GIT_SECRET}
+    githubClientSecret: ${GIT_SECRET}
 
 logging:
   file:
