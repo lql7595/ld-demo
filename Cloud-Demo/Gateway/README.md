@@ -18,7 +18,6 @@ Gateway服务是基于Spring Cloud Gateway构建的API网关，提供统一的�
 - Spring Boot 3.3.4
 - Spring Cloud Gateway
 - Spring Cloud Alibaba Nacos
-- Spring Cloud Alibaba Sentinel
 - Redis
 - Hutool
 
@@ -105,50 +104,6 @@ docker run -p 8080:8080 gateway-service
 ```
 
 ## API接口
-
-### 健康检查
-```
-GET /health
-GET /health/info
-```
-
-### 响应格式
-```json
-{
-  "code": "200",
-  "message": "操作成功",
-  "data": {
-    "status": "UP",
-    "service": "gateway-service",
-    "timestamp": 1640995200000
-  },
-  "timestamp": 1640995200000
-}
-```
-
-## 错误处理
-
-### 401 Unauthorized
-- Token缺失
-- Token无效
-- Token已过期
-
-### 403 Forbidden
-- 权限不足
-
-### 500 Internal Server Error
-- 网关服务异常
-
-## 监控和日志
-
-### 日志级别
-- 开发环境: DEBUG
-- 生产环境: INFO
-
-### 关键日志
-- 请求开始和结束日志
-- 认证成功/失败日志
-- 路由转发日志
 
 ## 注意事项
 

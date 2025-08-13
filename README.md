@@ -48,7 +48,7 @@ ld-demo/
 ```
 
 ### 3. 服务清单与端口
-- ld-mysql: 自定义镜像 ld-mysql-data（默认 3306:3306）
+- ld-mysql: mysql:8.0（默认 3306:3306）
 - ld-redis: bitnami/redis（默认 6379:6379，密码 123456）
 - ld-ldap: osixia/openldap（389/636，基于 `ldap-init/` 自动导入初始数据）
 - ld-nacos: nacos/nacos-server:v2.4.3（8848/9848，单机模式）
@@ -227,6 +227,27 @@ curl -X POST http://localhost:7573/demo/product/bus/add/info \
   
 # {"errorCode":200,"message":"成功","data":null}
  
+ 
+# 4. 修改产品 
+curl -X POST http://localhost:7573/demo/product/bus/update/info \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userLogin": "editor_1",
+    "token": "68026d0a6083499aa51bee9bcac8ded6",
+    "loginType": 1,
+    "id": 1,
+    "newPrdName": "更新后的产品名"
+  }'
+
+  # 5. 删除产品 
+curl -X POST http://localhost:7573/demo/product/bus/del/info \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userLogin": "editor_1",
+    "token": "68026d0a6083499aa51bee9bcac8ded6",
+    "loginType": 1,
+    "id": 1
+  }'
 ```
 
 ### 注意事项
