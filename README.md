@@ -192,36 +192,41 @@ docker exec -it ld-vue sh
 
 ```bash
 # 1. 登录获取token
-TOKEN=$(curl -s -X POST http://localhost:7573/demo/user/sys/login \
+curl -s -X POST http://localhost:7573/demo/user/sys/login \
   -H "Content-Type: application/json" \
   -d '{
     "userLogin": "editor_1",
     "pwd": "editor_1",
     "loginType": 1
-  }' | jq -r '.data')
+  }'
 
-echo "获取到的token: $TOKEN"
+# {"errorCode":200,"message":"成功","data":"68026d0a6083499aa51bee9bcac8ded6"}
 
 # 2. 查询产品列表
 curl -X POST http://localhost:7573/demo/product/bus/query/infolist \
   -H "Content-Type: application/json" \
   -d "{
     \"userLogin\": \"editor_1\",
-    \"token\": \"$TOKEN\",
+    \"token\": \"68026d0a6083499aa51bee9bcac8ded6\",
     \"loginType\": 1,
     \"cur\": 1,
     \"size\": 10
   }"
+
+# {"errorCode":200,"message":"成功","data":{"records":[{"id":1,"productName":"手机"}],"total":1,"size":10,"current":1,"pages":1}}
 
 # 3. 添加产品
 curl -X POST http://localhost:7573/demo/product/bus/add/info \
   -H "Content-Type: application/json" \
   -d "{
     \"userLogin\": \"editor_1\",
-    \"token\": \"$TOKEN\",
-    \"loginType\": 1,
+    \"token\": \"68026d0a6083499aa51bee9bcac8ded6\",
+    \"loginType\": 1, 
     \"productName\": \"新测试产品\"
   }"
+  
+# {"errorCode":200,"message":"成功","data":null}
+ 
 ```
 
 ### 注意事项
@@ -255,7 +260,7 @@ curl -X POST http://localhost:7573/demo/user/sys/login/ldap \
 ```
 
 
-#### 查询用户信息
+#### 查询用户信息 只支持查询数据库用户信息
 ```bash
 curl -X POST http://localhost:7573/demo/user/sys/query/userinfo \
   -H "Content-Type: application/json" \
