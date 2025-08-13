@@ -200,14 +200,14 @@ curl -s -X POST http://localhost:7573/demo/user/sys/login \
     "loginType": 1
   }'
 
-# {"errorCode":200,"message":"成功","data":"68026d0a6083499aa51bee9bcac8ded6"}
+# {"errorCode":200,"message":"成功","data":"b9e1ad6718684f6c859f7e140f1bf501"}
 
 # 2. 查询产品列表
 curl -X POST http://localhost:7573/demo/product/bus/query/infolist \
   -H "Content-Type: application/json" \
   -d "{
     \"userLogin\": \"editor_1\",
-    \"token\": \"68026d0a6083499aa51bee9bcac8ded6\",
+    \"token\": \"b9e1ad6718684f6c859f7e140f1bf501\",
     \"loginType\": 1,
     \"cur\": 1,
     \"size\": 10
@@ -220,34 +220,37 @@ curl -X POST http://localhost:7573/demo/product/bus/add/info \
   -H "Content-Type: application/json" \
   -d "{
     \"userLogin\": \"editor_1\",
-    \"token\": \"68026d0a6083499aa51bee9bcac8ded6\",
+    \"token\": \"b9e1ad6718684f6c859f7e140f1bf501\",
     \"loginType\": 1, 
     \"productName\": \"新测试产品\"
   }"
   
 # {"errorCode":200,"message":"成功","data":null}
  
- 
 # 4. 修改产品 
 curl -X POST http://localhost:7573/demo/product/bus/update/info \
   -H "Content-Type: application/json" \
   -d '{
     "userLogin": "editor_1",
-    "token": "68026d0a6083499aa51bee9bcac8ded6",
+    "token": "b9e1ad6718684f6c859f7e140f1bf501",
     "loginType": 1,
     "id": 1,
     "newPrdName": "更新后的产品名"
   }'
 
-  # 5. 删除产品 
+# {"errorCode":200,"message":"成功","data":null}
+
+# 5. 删除产品 
 curl -X POST http://localhost:7573/demo/product/bus/del/info \
   -H "Content-Type: application/json" \
   -d '{
     "userLogin": "editor_1",
-    "token": "68026d0a6083499aa51bee9bcac8ded6",
+    "token": "b9e1ad6718684f6c859f7e140f1bf501",
     "loginType": 1,
     "id": 1
   }'
+
+  # {"errorCode":200,"message":"成功","data":null}
 ```
 
 ### 注意事项
