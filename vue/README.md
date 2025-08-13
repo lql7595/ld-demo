@@ -4,7 +4,7 @@
     1.项目自带了Dockerfile 和nginx.conf 方便本人编写的的dockerr-compose.yml运行。
     2.项目自带了.env.production。同样是为契合docker-compose.yml 编写的后端地址。如需要，需自行更改。
     3.项目的请求虽然没有在httpheader中填充token和user，但是在request的body中自动填写了 userLogin 和 token。
-    3.后续内容由cursor输出，本人目检无误，有疑问可以联系作者lizable_0814@163.com。
+    4.有疑问可以联系作者lizable_0814@163.com。
 
 ## 1. 项目功能
 
@@ -68,10 +68,6 @@ vue/
 项目支持多环境配置，主要环境变量：
 
 ```bash
-# 开发环境
-VUE_APP_API_BASE_URL=http://localhost:8000/demo
-VUE_APP_ENV=development
-
 # 生产环境
 VUE_APP_API_BASE_URL=/demo
 VUE_APP_ENV=production
@@ -80,7 +76,6 @@ VUE_APP_ENV=production
 ### 配置文件
 - `.env.development` - 开发环境配置
 - `.env.production` - 生产环境配置
-- `.env.test` - 测试环境配置
 PS: 项目自带了.env.production 文件，请关注环境配置是否是自己需要的内容。（如果是开发环境配置，请忽略这条。）
 
 ## 5. 快速开始
@@ -96,8 +91,6 @@ cd vue
 
 # 安装依赖
 npm install
-# 或
-yarn install
 ```
 
 ### 开发环境运行
@@ -113,9 +106,6 @@ npm run serve
 ```bash
 # 构建生产版本
 npm run build:prod
-
-# 构建测试版本
-npm run build:test
 
 # 预览构建结果
 npm run preview

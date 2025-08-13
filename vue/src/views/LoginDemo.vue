@@ -70,6 +70,9 @@
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
+      <div class="login-footer" >
+        <a href="https://github.com/lql7595/ld-demo" target="_blank">github仓库</a>
+      </div>
     </div>
   </div>
 </template>
@@ -339,5 +342,17 @@ export default {
   margin-top: 20px;
   text-align: center;
   border: 1px solid #f5c6cb;
+}
+.login-footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+}
+.login-footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+.login-footer a:hover {
+  text-decoration: underline;
 }
 </style>

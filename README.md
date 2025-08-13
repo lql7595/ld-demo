@@ -21,15 +21,13 @@
         10.curl清单和结果见文末的第11点内容。
     1.项目已部署在 www.lizable.cn 欢迎访问。
     2.项目在一键部署前，需要 手动maven构建！！！ 详见5. 启动步骤
-    3.mysql的初始化数据已集成在我自构建的镜像中，启动即可用，无需初始化。
-    4.ldap数据需要初始化，一键部署时，会自动加载ldap-init下的文件。
+    3.ldap数据需要初始化，一键部署时，会自动加载ldap-init下的文件。
+    4.使用Git OAuth 验证时，务必配置对应变量：GIT_CLIENT_ID 和 GIT_SECRET(注意保护secret，建议配成环境变量) 。详见：Cloud-Demo\README.md。
     5.nacos没有做持久化功能，如需验证nacose 是否生效，请在分组demo_p：、文件：p_service.yml、参数：cus.product.timeout 设置你期望的token生效时间来检验。
-    6.使用Git OAuth 验证时，务必配置对应变量：GIT_CLIENT_ID 和 GIT_SECRET(注意保护secret，建议配成环境变量) 。详见：Cloud-Demo\README.md。
-    7.服务注册使用了nacos，可以访问nacos的控制台观察服务是否注册成功。
-    8.后端项目对其他内容有依赖关系。如变更过docker-compose.yml中的内容，请确定各个参数没有问题。
-    9.jdk 是17版本。
-    10.分别在Cloud-Demo\README.md 和 vue\README.md 提供了两个有针对性的README.md，欢迎阅读指正。
-    11.后续文本仅检视，如有疑问可以联系作者lizable_0814@163.com。
+    6.服务注册使用了nacos，可以访问nacos的控制台观察服务是否注册成功。
+    7.后端项目对其他内容有依赖关系。如变更过docker-compose.yml中的内容，请确定各个参数没有问题。
+    8.jdk 是17版本。
+    9.后续文本仅检视，如有疑问可以联系作者lizable_0814@163.com。
 
 ### 1. 项目概述
 - 前后端分离的演示项目（后端 Spring Boot 3 + 前端 Vue 3），通过 Docker Compose 一键拉起完整环境。
